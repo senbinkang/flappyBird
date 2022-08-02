@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flappy bird</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+    <!-- game 相关文件 -->
+    <script src="game/utils.js"></script>
+    <script src="game/game.js"></script>
+    <script src="game/game_scene.js"></script>
+    <script src="game/game_image.js"></script>
+    <script src="game/game_label.js"></script>
+    <script src="game/game_animation.js"></script>
+    <script src="game/game_particle_system.js"></script>
+    <!-- 场景文件 -->
+    <script src="scene/main/pipes.js"></script>
+    <script src="scene/main/scene.js"></script>
+    <!-- 结束和标题场景 -->
+    <script src="scene/end/scene_end.js"></script>
+    <script src="scene/title/scene_title.js"></script>
+    <!-- 配置数据 -->
+    <script src="config.js"></script>
+    <script src="level.js"></script>
+</head>
+
+<body>
+    <canvas id='id-canvas' width="400" height="600"></canvas>
+    <hr>
+    <input id="id-input-speed" type="range" value="30">
+    <div class="game-controls">
+    </div>
+    <script src="main.js"></script>
+    <script>
+        // 声名式（按照约定方式，配置好，自动生成）
+        var bindAll = function (sel, eventName, callback) {
+            var l = es(sel)
+            for (var i = 0; i < l.length; i++) {
+                var input = l[i]
+                input.addEventListener(eventName, function (event) {
+                    callback(event)
+                })
+            }
+        }
+
+        var templateControl = function(key, item) {
+            return `
+            <div class="">
+                <label>
+                    <input
+                        class="game-auto-slider"
+                        max="300"
+                        type="range"
+                        value="${item.value}"
+                        data-value="config.${key}"
+                    >
+                    ${item._comment}: <span class="game-label"></span>
+                </label>
+            </div>
+            `
+        }
+
+        var insertControls = function() {
+            var div = e('.game-controls')
+            var keys = Object.keys(config)
+            for (var k of keys) {
+                var item = config[k]
+                var html = templateControl(k, item)
+                div.insertAdjacentHTML('beforeend', html)
+            }
+        }
+
+        var bindEvents = function() {
+            bindAll('.game-auto-slider', 'input', function () {
+                var target = event.target
+                var bindVar = target.dataset.value;
+                var v = target.value
+                eval(bindVar + '.value =' + v)
+                // config[bindVar] = v
+                var label = target.closest('label').querySelector('.game-label')
+                label.innerText = v
+            })
+        }
+
+        var __main = function () {
+            // 从配置文件生成 HTML 控件
+            insertControls()
+            // 绑定事件
+            bindEvents()
+        }
+
+        __main()
+    </script>
+</body>
+</html>
